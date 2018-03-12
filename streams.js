@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const { createReadStream, readFile, createWriteStream, writeFile, appendFile} = require('fs');
 const { Readable, Transform, Writable } = require('stream');
 // This was some practice:
@@ -14,25 +16,26 @@ const { Readable, Transform, Writable } = require('stream');
 // bears.pipe(actualBears);
 
 const languages = createReadStream('languages.json');
-// const languages_cap = fs.createWriteStream('languages_cap.json');
 const toCaps = Transform();
 const languages_cap = Writable();
+const [,,fileArg] = process.argv;
 
 toCaps._transform = (buffer, _, cb) =>{
-  // let capString = buffer.toString().toUpperCase();
   cb(null, buffer.toString().toUpperCase());
 }
 let newString = "Words";
 newString.toUpperCase();
+if(fileArg){
+  languages_cap._write = (buffer, _, next) =>{
+    writeFile(`${fileArg}`, buffer, (error) =>{
+      if(error){
+        throw error;
+      }
+      console.log('data written to file!');
+    })
+    next();
+  }
 
-languages_cap._write = (buffer, _, next) =>{
-  writeFile("languages_Cap.json", buffer, (error) =>{
-    if(error){
-      throw error;
-    }
-    console.log('data written to file!');
-  })
-  next();
 }
 
 languages
