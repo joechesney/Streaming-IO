@@ -27,6 +27,8 @@ let newString = "Words";
 newString.toUpperCase();
 if(fileArg){
   languages_cap._write = (buffer, _, next) =>{
+    // I'm using writeFile here bc it overwrites the contents of the file 
+    // where appendFile would add the contents onto the end 
     writeFile(`${fileArg}`, buffer, (error) =>{
       if(error){
         throw error;
